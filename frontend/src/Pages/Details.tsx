@@ -36,13 +36,10 @@ export default function Details() {
     new Set(experience.slots.map((s: any) => s.date))
   ) as string[];
 
-  const timesForDate = (date: string) =>
-    experience.slots.filter((s: any) => s.date === date);
-
   // derive unique times across all dates for display when no date selected
   const uniqueTimes = Array.from(
     new Set(experience.slots.map((s: any) => s.time))
-  );
+  ) as string[];
 
   const getTimeAvailability = (time: string) => {
     if (selectedDate) {
