@@ -17,9 +17,12 @@ export default function Checkout() {
 
   const applyPromo = async () => {
     try {
-      const res = await axios.post("http://localhost:8080/api/promo/validate", {
-        code: promoCode,
-      });
+      const res = await axios.post(
+        `https://bookit-fullstack-51wv.onrender.com/api/promo/validate`,
+        {
+          code: promoCode,
+        }
+      );
       if (res.data.valid) {
         if (res.data.discount < 1)
           setPrice((p) => Math.round(p - p * res.data.discount));
@@ -36,19 +39,45 @@ export default function Checkout() {
     if (!agree) return alert("Please agree to the terms");
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8080/api/bookings", {
-        name,
-        email,
-        experienceId: experience._id,
-        slot,
-        totalPrice: price,
-        promoCode,
-      });
+      const res = await axios.post(
+        "https://bookit-fullstack-51wv.onrender.com/api/bookings",
+        {
+          name,
+          email,
+          experienceId: experience._id,
+          slot,
+          totalPrice: price,
+          promoCode,
+        }
+      );
       navigate("/result", {
         state: { success: res.data.success, booking: res.data.booking },
       });
-    } catch (err) {
-      navigate("/result", { state: { success: false } });
+    } catch (err: any) {
+      // Check if it's a duplicate booking error
+      if (err.response?.data?.isDuplicate) {
+        alert(err.response.data.message);
+        setLoading(false);
+        return;
+      }
+
+      // Check if slot is no longer available
+      if (err.response?.data?.message?.includes("no longer available")) {
+        alert(
+          "Sorry, this time slot is no longer available. Please select a different time."
+        );
+        navigate(-1); // Go back to details page
+        return;
+      }
+
+      // For other errors, go to result page
+      navigate("/result", {
+        state: {
+          success: false,
+          message:
+            err.response?.data?.message || "Booking failed. Please try again.",
+        },
+      });
     } finally {
       setLoading(false);
     }

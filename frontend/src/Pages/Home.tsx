@@ -22,7 +22,7 @@ export default function Home({ searchQuery = "" }: HomeProps) {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/experiences")
+      .get("https://bookit-fullstack-51wv.onrender.com/api/experiences")
       .then((res) => setExperiences(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));

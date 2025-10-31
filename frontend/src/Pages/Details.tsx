@@ -12,7 +12,7 @@ export default function Details() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/experiences/${id}`)
+      .get(`https://bookit-fullstack-51wv.onrender.com/api/experiences/${id}`)
       .then((res) => setExperience(res.data))
       .catch(console.error);
   }, [id]);
